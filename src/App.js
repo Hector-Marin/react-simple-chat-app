@@ -12,15 +12,9 @@ import { useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck, faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
 
-firebase.initializeApp({
-  apiKey: "AIzaSyC4PsK0ND9eJmwg7gH8Xvq9SqOcAAM-5Wo",
-  authDomain: "simple-chat-a89b4.firebaseapp.com",
-  projectId: "simple-chat-a89b4",
-  storageBucket: "simple-chat-a89b4.appspot.com",
-  messagingSenderId: "902578040944",
-  appId: "1:902578040944:web:f183ffaf5b78e41b02c4b5",
-  measurementId: "G-33LYTNXMYC"
-})
+import FireBaseConfig from './firebase-config.json';
+
+firebase.initializeApp(FireBaseConfig);
 
 const auth = firebase.auth();
 const firestore = firebase.firestore();
@@ -67,7 +61,7 @@ function ChatRoom(){
 
 
   const messagesRef = firestore.collection('messages');
-  const query = messagesRef.orderBy('createdAt').limit(25);
+  const query = messagesRef.orderBy('createdAt', 'desc').limit(25);
 
   const [messages] = useCollectionData(query,{idField:'id'});
 
@@ -96,7 +90,7 @@ function ChatRoom(){
         <SignOut />
       </div>
       <div className="chat">
-        { messages && messages.map(msg => <ChatMessage key={msg.id} message={msg} /> )}
+        { messages && messages.reverse().map(msg => <ChatMessage key={msg.id} message={msg} /> )}
         <div ref={dummy}></div>
       </div>
       <form className="form" onSubmit={sendMessage}>
